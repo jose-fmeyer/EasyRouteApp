@@ -7,6 +7,6 @@ To install the app just acess the Web page "https://www.hockeyapp.net/" and Sign
 User: josef.meyer89@gmail.com
 Password: easyrouteapp
 
-Just acess the app on dashboard and click on download button to push the lastest version to your phone.
+Just acess the app on dashboard and click on download button to install the lastest version to your phone.
 
-Obs: To interate with Google Maps just find the street which you want and press this location to start the street search.
+Ps: To interate with Google Maps just find the street which you want and press this location to start the street search.
