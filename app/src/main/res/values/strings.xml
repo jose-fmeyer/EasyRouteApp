@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Easy Route App</string>
+    <string name="subtitle_toolbar">Routes and timetables</string>
+    <string name="title_activity_detail">Route Details</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_hint">Street Name</string>
+    <string name="action_search_route">Search Routes</string>
+    <string name="rest_service_user">WKD4N7YMA1uiM8V</string>
+    <string name="rest_service_pass">DtdTtzMLQlA0hk2C1Yi5pLyVIlAQ68</string>
+    <string name="end_point_routes">https://api.appglu.com/v1/queries/findRoutesByStopName/run</string>
+    <string name="end_point_streets">https://api.appglu.com/v1/queries/findStopsByRouteId/run</string>
+    <string name="end_point_timetables">https://api.appglu.com/v1/queries/findDeparturesByRouteId/run</string>
+    <string name="empty_data">No routes to show</string>
+    <string name="tab_streets">ROUTE STREETS</string>
+    <string name="tab_timetables">ROUTE TIMETABLES</string>
+    <string name="title_activity_float">FloatActivity</string>
+    <string name="title_activity_map">Map</string>
+</resources>
