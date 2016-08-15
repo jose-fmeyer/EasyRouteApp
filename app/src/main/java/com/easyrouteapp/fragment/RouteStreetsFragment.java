@@ -38,9 +38,6 @@ public class RouteStreetsFragment extends Fragment implements FragmentAdapterDat
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(!EventBus.getDefault().isRegistered(RouteStreetsFragment.this)){
-            EventBus.getDefault().register(RouteStreetsFragment.this);
-        }
         fragmentView = inflater.inflate(R.layout.fragment_route_streets, container, false);
         recyclerViewStreets = (RecyclerView) fragmentView.findViewById(R.id.rv_routes_streets);
         recyclerViewStreets.setHasFixedSize(true);
@@ -55,9 +52,19 @@ public class RouteStreetsFragment extends Fragment implements FragmentAdapterDat
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(RouteStreetsFragment.this);
+    public void onResume() {
+        super.onResume();
+        if(!EventBus.getDefault().isRegistered(RouteStreetsFragment.this)){
+            EventBus.getDefault().register(RouteStreetsFragment.this);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(EventBus.getDefault().isRegistered(RouteStreetsFragment.this)){
+            EventBus.getDefault().unregister(RouteStreetsFragment.this);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -136,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMapAdressReturn(ReverseGeoCodeLoadedEvent event) {
+        if(event.getAddress() == null){
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.location_not_founded), Toast.LENGTH_LONG).show();
+            return;
+        }
         String stopName = event.getAddress().substring(0, event.getAddress().indexOf(",")).toUpperCase();
         searchToolbar.setTitle(stopName);
         RestWebServiceRoutesTask restTask = new RestWebServiceRoutesTask(getApplicationContext());

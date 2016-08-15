@@ -24,4 +24,5 @@
     <string name="message_without_con">Is not possible to start the search because you don\'t have internet acess.</string>
     <string name="name_default_city_map">Florianópolis, SC</string>
     <string name="label_weekday">WEEKDAY</string>
+    <string name="location_not_founded">Was not possible to find the adress by the clicked point. Pleanse, select other point on the map and try again.</string>
 </resources>

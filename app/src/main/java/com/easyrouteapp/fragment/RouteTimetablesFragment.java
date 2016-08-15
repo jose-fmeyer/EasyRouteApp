@@ -36,9 +36,6 @@ public class RouteTimetablesFragment extends Fragment implements FragmentAdapter
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(!EventBus.getDefault().isRegistered(RouteTimetablesFragment.this)){
-            EventBus.getDefault().register(RouteTimetablesFragment.this);
-        }
         fragmentView = inflater.inflate(R.layout.fragment_route_timetables, container, false);
         recyclerViewTimetables = (RecyclerView) fragmentView.findViewById(R.id.rv_routes_timetables);
         recyclerViewTimetables.setHasFixedSize(true);
@@ -53,9 +50,19 @@ public class RouteTimetablesFragment extends Fragment implements FragmentAdapter
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(RouteTimetablesFragment.this);
+    public void onResume() {
+        super.onResume();
+        if(!EventBus.getDefault().isRegistered(RouteTimetablesFragment.this)){
+            EventBus.getDefault().register(RouteTimetablesFragment.this);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(EventBus.getDefault().isRegistered(RouteTimetablesFragment.this)){
+            EventBus.getDefault().unregister(RouteTimetablesFragment.this);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

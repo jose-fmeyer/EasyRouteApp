@@ -80,8 +80,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                EventBus.getDefault().post(new StartMapSearchEvent(latLng));
                 finish();
+                EventBus.getDefault().post(new StartMapSearchEvent(latLng));
             }
         });
         alertDialogBuilder.setNegativeButton(getResources().getString(R.string.label_no), new DialogInterface.OnClickListener() {
