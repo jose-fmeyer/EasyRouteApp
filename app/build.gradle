@@ -6,10 +6,11 @@ android {
 
     defaultConfig {
         applicationId "com.easyrouteapp"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "e2f18ce662de4098b9af50a8f18f57c3"]
     }
     buildTypes {
         release {

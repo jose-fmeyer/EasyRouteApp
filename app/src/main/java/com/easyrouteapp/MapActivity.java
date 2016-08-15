@@ -7,20 +7,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.easyrouteapp.async.GeocodingTask;
 import com.easyrouteapp.event.GeoCodeErrorEvent;
-import com.easyrouteapp.event.GeoCodeLoadedEvent;
+import com.easyrouteapp.event.StartMapSearchEvent;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapLongClickListener {
     private static final String TAG_LOG = "[MapActivity]";
+    public static final String EXTRA_DEFAULT_MAP_NAME = "EXTRA_DEFAULT_MAP_NAME";
+    private LatLng defaultCoordinates;
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        setDefaultCoordinates();
+    }
+
+    private void setDefaultCoordinates() {
+        if(getIntent().getExtras() != null){
+            this.defaultCoordinates = (LatLng) getIntent().getExtras().get(EXTRA_DEFAULT_MAP_NAME);
+        }
     }
 
     @Override
@@ -40,15 +51,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         googleMap.setOnMapLongClickListener(this);
+        googleMap.setOnMapLoadedCallback(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMapAdressReturn(GeoCodeLoadedEvent event) {
-        finish();
+    private CameraUpdate getDefaultCameraUpdatePosition() {
+        CameraPosition.Builder builder = new CameraPosition.Builder();
+        builder.target(defaultCoordinates).zoom(12);
+        CameraPosition cameraPos = builder.build();
+        return CameraUpdateFactory.newCameraPosition(cameraPos);
     }
 
     @Subscribe
@@ -60,21 +75,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(final LatLng latLng) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Do you wanna use this coordinates to find routes?");
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setMessage(getResources().getString(R.string.msg_use_coordinates));
+        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.label_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                GeocodingTask task = new GeocodingTask(getApplicationContext());
-                task.execute(latLng.latitude, latLng.longitude);
+                EventBus.getDefault().post(new StartMapSearchEvent(latLng));
+                finish();
             }
         });
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.label_no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
         alertDialogBuilder.create().show();
+    }
+
+    @Override
+    public void onMapLoaded() {
+        if(defaultCoordinates != null){
+            googleMap.animateCamera(getDefaultCameraUpdatePosition());
+        }
     }
 }

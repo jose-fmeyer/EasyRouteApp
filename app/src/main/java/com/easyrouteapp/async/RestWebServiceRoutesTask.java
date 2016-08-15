@@ -31,7 +31,7 @@ public class RestWebServiceRoutesTask extends AsyncTask<FilterDto, Void, ReturnD
 
     @Override
     protected void onPreExecute() {
-        EventBus.getDefault().post(new RefreshStartLoadingEvent());
+            EventBus.getDefault().post(new RefreshStartLoadingEvent());
     }
 
     @Override

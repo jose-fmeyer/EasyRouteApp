@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +38,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
@@ -57,6 +59,7 @@ public class DetailActivity extends AppCompatActivity {
 
         detailToolbar = (Toolbar) findViewById(R.id.tb_detail);
         detailToolbar.setLogo(R.mipmap.ic_launcher);
+        detailToolbar.setTitle(routeForDetail.getLongName());
         setSupportActionBar(detailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -71,11 +74,6 @@ public class DetailActivity extends AppCompatActivity {
                 loadTabData(position);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         loadTabData(TabsAdapter.POS_ROUTE_STREET_TAB);
     }
 
@@ -109,10 +107,26 @@ public class DetailActivity extends AppCompatActivity {
             frag.addRecycleViewData(routes);
             return;
         }
-        RouteTimetablesFragment frag = (RouteTimetablesFragment)  getSupportFragmentManager().findFragmentByTag(
+        Pair<List<RouteTimetables>, List<RouteTimetables>> filteredTimeTables = getWeekDayRoutes(event.getData());
+        RouteTimetablesFragment fragTab1 = (RouteTimetablesFragment)  getSupportFragmentManager().findFragmentByTag(
                 "android:switcher:"+R.id.view_page_tabs+":1");
-        List<RouteTimetables> routes = event.getData();
-        frag.addRecycleViewData(routes);
+        fragTab1.addRecycleViewData(filteredTimeTables.first);
+        RouteTimetablesFragment fragTab2 = (RouteTimetablesFragment)  getSupportFragmentManager().findFragmentByTag(
+                "android:switcher:"+R.id.view_page_tabs+":2");
+        fragTab2.addRecycleViewData(filteredTimeTables.second);
+    }
+
+    private Pair getWeekDayRoutes(List<RouteTimetables> routeTimetables){
+        List<RouteTimetables> weekDayRoutes = new ArrayList<>();
+        List<RouteTimetables> weekendRoutes = new ArrayList<>();
+        for (RouteTimetables routeTime: routeTimetables) {
+            if(getResources().getString(R.string.label_weekday).equals(routeTime.getCalendar())){
+                weekDayRoutes.add(routeTime);
+                continue;
+            }
+            weekendRoutes.add(routeTime);
+        }
+        return new Pair(weekDayRoutes, weekendRoutes);
     }
 
     @Subscribe

@@ -33,6 +33,7 @@ public class TabsAdapter extends FragmentPagerAdapter {
     private void loadTitles(){
         titles.add(ResourceHelper.getString(context, R.string.tab_streets));
         titles.add(ResourceHelper.getString(context, R.string.tab_timetables));
+        titles.add(ResourceHelper.getString(context, R.string.tab_weekend_timetables));
     }
 
     @Override
@@ -42,6 +43,8 @@ public class TabsAdapter extends FragmentPagerAdapter {
             case 0 : fragment = new RouteStreetsFragment();
             break;
             case 1 : fragment = new RouteTimetablesFragment();
+            break;
+            case 2 : fragment = new RouteTimetablesFragment();
             break;
         }
         Bundle bundle = new Bundle();

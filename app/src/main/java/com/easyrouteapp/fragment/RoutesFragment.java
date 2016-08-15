@@ -5,16 +5,20 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.easyrouteapp.R;
 import com.easyrouteapp.adapter.RouteAdapter;
 import com.easyrouteapp.component.CustomRecycleView;
 import com.easyrouteapp.domain.Route;
+import com.easyrouteapp.event.LoadDataServiceErrorEvent;
 import com.easyrouteapp.event.RefreshStartLoadingEvent;
 import com.easyrouteapp.event.RefreshStopEvent;
+import com.easyrouteapp.event.ReturnLoadDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoutesFragment extends Fragment {
+    private static final String TAG_LOG = "[RoutesFragment]";
 
     private CustomRecycleView routesRV;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -60,6 +65,19 @@ public class RoutesFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(RoutesFragment.this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoadRoutesData(ReturnLoadDataEvent event) {
+        List<Route> routes = event.getData();
+        clearRecycleViewData();
+        addRecycleViewData(routes);
+    }
+
+    @Subscribe
+    public void onLoadDataError(LoadDataServiceErrorEvent event) {
+        Log.e(TAG_LOG, event.getError().getMessage(), event.getError());
+        Toast.makeText(getActivity().getApplicationContext(), event.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

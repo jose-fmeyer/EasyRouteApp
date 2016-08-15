@@ -1,17 +1,19 @@
 package com.easyrouteapp.event;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by fernando on 12/08/2016.
  */
 public class GeoCodeLoadedEvent {
 
-    private String address;
+    private LatLng latLng;
 
-    public GeoCodeLoadedEvent(String address) {
-        this.address = address;
+    public GeoCodeLoadedEvent(LatLng latLng) {
+        this.latLng = latLng;
     }
 
-    public String getAddress() {
-        return address;
+    public LatLng getLatLng() {
+        return latLng;
     }
 }

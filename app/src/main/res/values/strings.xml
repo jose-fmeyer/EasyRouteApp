@@ -14,7 +14,14 @@
     <string name="end_point_timetables">https://api.appglu.com/v1/queries/findDeparturesByRouteId/run</string>
     <string name="empty_data">No routes to show</string>
     <string name="tab_streets">ROUTE STREETS</string>
-    <string name="tab_timetables">ROUTE TIMETABLES</string>
+    <string name="tab_timetables">WEEKDAY TIMETABLES</string>
+    <string name="tab_weekend_timetables">WEEKEND TIMETABLES</string>
     <string name="title_activity_float">FloatActivity</string>
     <string name="title_activity_map">Map</string>
+    <string name="msg_use_coordinates">Do you wanna use this coordinates to find routes?</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="message_without_con">Is not possible to start the search because you don\'t have internet acess.</string>
+    <string name="name_default_city_map">Florianópolis, SC</string>
+    <string name="label_weekday">WEEKDAY</string>
 </resources>

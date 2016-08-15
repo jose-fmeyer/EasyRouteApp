@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -19,15 +17,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.easyrouteapp.async.GeocodingTask;
 import com.easyrouteapp.async.RestWebServiceRoutesTask;
+import com.easyrouteapp.async.ReverseGeocodingTask;
 import com.easyrouteapp.domain.EntityBase;
-import com.easyrouteapp.domain.Route;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.GeoCodeLoadedEvent;
-import com.easyrouteapp.event.LoadDataServiceErrorEvent;
-import com.easyrouteapp.event.ReturnLoadDataEvent;
+import com.easyrouteapp.event.ReverseGeoCodeLoadedEvent;
 import com.easyrouteapp.event.StartDetailRouteEvent;
+import com.easyrouteapp.event.StartMapSearchEvent;
 import com.easyrouteapp.fragment.RoutesFragment;
+import com.easyrouteapp.helper.StatusNetworkConnectionHelper;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,8 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG_LOG = "[MainActivity]";
-
     private Toolbar searchToolbar;
     private RoutesFragment fragRoutes;
     private List<EntityBase> routes = new ArrayList<>();
@@ -86,27 +85,25 @@ public class MainActivity extends AppCompatActivity {
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
+                if(!StatusNetworkConnectionHelper.verifyConnection(MainActivity.this) ) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_without_con), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                new GeocodingTask(getApplicationContext()).execute(getResources().getString(R.string.name_default_city_map));
             }
         });
     }
 
     private SearchView getSearchView(MenuItem item) {
-        SearchView searchView;
         if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ){
-            return searchView = (SearchView) item.getActionView();
+            return (SearchView) item.getActionView();
         }
-        return searchView = (SearchView) MenuItemCompat.getActionView( item );
+        return (SearchView) MenuItemCompat.getActionView( item );
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
-    }
-
-    public List<EntityBase> getRoutesList() {
-        return routes;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -123,7 +120,11 @@ public class MainActivity extends AppCompatActivity {
         seachRoutesByQuery( intent );
     }
 
-    public void seachRoutesByQuery( Intent intent ){
+    public void seachRoutesByQuery( Intent intent ) {
+        if(!StatusNetworkConnectionHelper.verifyConnection(this) ){
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_without_con), Toast.LENGTH_LONG).show();
+            return;
+        }
         if( Intent.ACTION_SEARCH.equalsIgnoreCase( intent.getAction() ) ){
             String stopName = intent.getStringExtra( SearchManager.QUERY );
             searchToolbar.setTitle(stopName);
@@ -134,23 +135,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadRoutesData(ReturnLoadDataEvent event) {
-        List<Route> routes = event.getData();
-        fragRoutes.addRecycleViewData(routes);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMapAdressReturn(GeoCodeLoadedEvent event) {
+    public void onMapAdressReturn(ReverseGeoCodeLoadedEvent event) {
         String stopName = event.getAddress().substring(0, event.getAddress().indexOf(",")).toUpperCase();
         searchToolbar.setTitle(stopName);
-        fragRoutes.clearRecycleViewData();
         RestWebServiceRoutesTask restTask = new RestWebServiceRoutesTask(getApplicationContext());
         restTask.execute(new FilterDto.Builder().withStopNameParam("%" + stopName + "%").build());
     }
 
-    @Subscribe
-    public void onLoadDataError(LoadDataServiceErrorEvent event) {
-        Log.e(TAG_LOG, event.getError().getMessage(), event.getError());
-        Toast.makeText(getApplicationContext(), event.getMessage(), Toast.LENGTH_LONG).show();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReturnDefaultCoordinatesToOpenMap(GeoCodeLoadedEvent event) {
+        Intent intent = new Intent(MainActivity.this, MapActivity.class);
+        intent.putExtra(MapActivity.EXTRA_DEFAULT_MAP_NAME, event.getLatLng());
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartRouteMapSearch(StartMapSearchEvent event) {
+        LatLng coordinates = event.getCoordinates();
+        new ReverseGeocodingTask(getApplicationContext()).execute(coordinates.latitude, coordinates.longitude);
     }
 }

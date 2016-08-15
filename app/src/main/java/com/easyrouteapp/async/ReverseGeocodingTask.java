@@ -4,22 +4,20 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.easyrouteapp.event.GeoCodeErrorEvent;
-import com.easyrouteapp.event.GeoCodeLoadedEvent;
 import com.easyrouteapp.event.ReverseGeoCodeLoadedEvent;
 import com.easyrouteapp.event.RefreshStartLoadingEvent;
 import com.easyrouteapp.event.RefreshStopEvent;
 import com.easyrouteapp.helper.GeocoderHelper;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
-public class GeocodingTask extends AsyncTask<String, Void, LatLng> {
+public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
 
     private Context context;
 
-    public GeocodingTask(Context context){
+    public ReverseGeocodingTask(Context context){
         this.context = context;
     }
 
@@ -29,10 +27,9 @@ public class GeocodingTask extends AsyncTask<String, Void, LatLng> {
     }
 
     @Override
-    protected LatLng doInBackground(String... params) {
+    protected String doInBackground(Double... params) {
         try {
-            double[] coordinates = GeocoderHelper.doGeocoding(context, params[0]);
-            return new LatLng(coordinates[0], coordinates[1]);
+            return GeocoderHelper.doReverseGeocoding(context, params[0], params[1]);
         } catch (final IOException e) {
             EventBus.getDefault().post(new GeoCodeErrorEvent("Error on execute reverse geo code", e));
         }
@@ -40,8 +37,8 @@ public class GeocodingTask extends AsyncTask<String, Void, LatLng> {
     }
 
     @Override
-    protected void onPostExecute(LatLng address) {
-        EventBus.getDefault().post(new GeoCodeLoadedEvent(address));
+    protected void onPostExecute(String address) {
+        EventBus.getDefault().post(new ReverseGeoCodeLoadedEvent(address));
         EventBus.getDefault().post(new RefreshStopEvent());
     }
 }
