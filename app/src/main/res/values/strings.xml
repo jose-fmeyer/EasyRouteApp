@@ -4,7 +4,6 @@
     <string name="title_activity_detail">Route Details</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Street Name</string>
     <string name="action_search_route">Search Routes</string>
     <string name="rest_service_user">WKD4N7YMA1uiM8V</string>
@@ -21,8 +20,8 @@
     <string name="msg_use_coordinates">Do you wanna use this coordinates to find routes?</string>
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
-    <string name="message_without_con">Is not possible to start the search because you don\'t have internet acess.</string>
+    <string name="message_without_con">Is not possible to start the search because you don't have internet access.</string>
     <string name="name_default_city_map">Florianópolis, SC</string>
     <string name="label_weekday">WEEKDAY</string>
-    <string name="location_not_founded">Was not possible to find the adress by the clicked point. Pleanse, select other point on the map and try again.</string>
+    <string name="location_not_founded">Was not possible to find the address by the clicked point. Please, select other point on the map and try again.</string>
 </resources>
