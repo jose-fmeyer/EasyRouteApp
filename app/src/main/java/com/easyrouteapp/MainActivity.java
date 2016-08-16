@@ -19,16 +19,13 @@ import android.widget.Toast;
 
 import com.easyrouteapp.async.GeocodingTask;
 import com.easyrouteapp.async.RestWebServiceRoutesTask;
-import com.easyrouteapp.async.ReverseGeocodingTask;
 import com.easyrouteapp.domain.EntityBase;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.GeoCodeLoadedEvent;
 import com.easyrouteapp.event.ReverseGeoCodeLoadedEvent;
 import com.easyrouteapp.event.StartDetailRouteEvent;
-import com.easyrouteapp.event.StartMapSearchEvent;
 import com.easyrouteapp.fragment.RoutesFragment;
 import com.easyrouteapp.helper.StatusNetworkConnectionHelper;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -151,11 +148,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, MapActivity.class);
         intent.putExtra(MapActivity.EXTRA_DEFAULT_MAP_NAME, event.getLatLng());
         startActivity(intent);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStartRouteMapSearch(StartMapSearchEvent event) {
-        LatLng coordinates = event.getCoordinates();
-        new ReverseGeocodingTask(getApplicationContext()).execute(coordinates.latitude, coordinates.longitude);
     }
 }

@@ -47,7 +47,7 @@ public class RestWebServiceRoutesTask extends AsyncTask<FilterDto, Void, ReturnD
 
     @Override
     protected void onPostExecute(ReturnDataRouteDto dataDto) {
-        EventBus.getDefault().post(new ReturnLoadDataEvent<Route>(dataDto.getRows(), MainActivity.class));
         EventBus.getDefault().post(new RefreshStopEvent());
+        EventBus.getDefault().post(new ReturnLoadDataEvent<Route>(dataDto.getRows(), MainActivity.class));
     }
 }

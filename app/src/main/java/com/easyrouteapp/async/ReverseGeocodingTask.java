@@ -38,7 +38,7 @@ public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
 
     @Override
     protected void onPostExecute(String address) {
-        EventBus.getDefault().post(new ReverseGeoCodeLoadedEvent(address));
         EventBus.getDefault().post(new RefreshStopEvent());
+        EventBus.getDefault().post(new ReverseGeoCodeLoadedEvent(address));
     }
 }

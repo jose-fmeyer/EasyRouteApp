@@ -71,12 +71,17 @@ public class DetailActivity extends AppCompatActivity {
         tabLayout = (SlidingTabLayout) findViewById(R.id.detail_tabs);
         tabLayout.setViewPager(viewPager);
         tabLayout.setSelectedIndicatorColors(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
-        tabLayout.setOnPageChangeListener(new OnPageChangeListenerAdapter(){
+        tabLayout.setOnPageChangeListener(new OnPageChangeListenerAdapter() {
             @Override
             public void onPageSelected(int position) {
                 loadTabData(position);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadTabData(TabsAdapter.POS_ROUTE_STREET_TAB);
     }
 

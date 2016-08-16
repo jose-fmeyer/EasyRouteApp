@@ -1,40 +1,45 @@
 package com.easyrouteapp;
 
 import android.content.DialogInterface;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.easyrouteapp.async.ReverseGeocodingTask;
 import com.easyrouteapp.event.GeoCodeErrorEvent;
-import com.easyrouteapp.event.StartMapSearchEvent;
-import com.google.android.gms.maps.CameraUpdate;
+import com.easyrouteapp.event.RefreshStartLoadingEvent;
+import com.easyrouteapp.event.RefreshStopEvent;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapLongClickListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
     private static final String TAG_LOG = "[MapActivity]";
     public static final String EXTRA_DEFAULT_MAP_NAME = "EXTRA_DEFAULT_MAP_NAME";
     private LatLng defaultCoordinates;
     private GoogleMap googleMap;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         EventBus.getDefault().register(MapActivity.this);
-
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_swipemap);
+        mSwipeRefreshLayout.setEnabled(false);
+        addSwipeTypeRefreshListener();
+        setDefaultCoordinates();
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        setDefaultCoordinates();
     }
 
     private void setDefaultCoordinates() {
@@ -52,24 +57,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         googleMap.setOnMapLongClickListener(this);
-        googleMap.setOnMapLoadedCallback(this);
-    }
-
-    private CameraUpdate getDefaultCameraUpdatePosition() {
-        CameraPosition.Builder builder = new CameraPosition.Builder();
-        builder.target(defaultCoordinates).zoom(12);
-        CameraPosition cameraPos = builder.build();
-        return CameraUpdateFactory.newCameraPosition(cameraPos);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultCoordinates, 12));
     }
 
     @Subscribe
     public void onLoadDataError(GeoCodeErrorEvent event) {
         Log.e(TAG_LOG, event.getError().getMessage(), event.getError());
         Toast.makeText(getApplicationContext(), event.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartRefresh(RefreshStartLoadingEvent event) {
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStopRefresh(RefreshStopEvent event) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        finish();
     }
 
     @Override
@@ -79,9 +88,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         alertDialogBuilder.setPositiveButton(getResources().getString(R.string.label_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                mSwipeRefreshLayout.setEnabled(true);
                 dialog.cancel();
-                finish();
-                EventBus.getDefault().post(new StartMapSearchEvent(latLng));
+                new ReverseGeocodingTask(getApplicationContext()).execute(latLng.latitude, latLng.longitude);
             }
         });
         alertDialogBuilder.setNegativeButton(getResources().getString(R.string.label_no), new DialogInterface.OnClickListener() {
@@ -93,10 +102,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         alertDialogBuilder.create().show();
     }
 
-    @Override
-    public void onMapLoaded() {
-        if(defaultCoordinates != null){
-            googleMap.animateCamera(getDefaultCameraUpdatePosition());
-        }
+    private void addSwipeTypeRefreshListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
+
 }

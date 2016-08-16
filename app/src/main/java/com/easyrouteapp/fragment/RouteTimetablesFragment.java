@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RouteTimetablesFragment extends Fragment implements FragmentAdapterDataSize {
+public class RouteTimetablesFragment extends RefreshableFragment implements FragmentAdapterDataSize {
 
     private RecyclerView recyclerViewTimetables;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -45,6 +44,7 @@ public class RouteTimetablesFragment extends Fragment implements FragmentAdapter
         recyclerViewTimetables.setLayoutManager(llm);
 
         recyclerViewTimetables.setAdapter(new RouteTimestableAdapter(getActivity(), new ArrayList<RouteTimetables>()));
+        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swipetimes);
 
         return fragmentView;
     }
@@ -65,21 +65,9 @@ public class RouteTimetablesFragment extends Fragment implements FragmentAdapter
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStartRefresh(RefreshStartLoadingEvent event){
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swipetimes);
-        if(!mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.setRefreshing(true);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStopRefresh(RefreshStopEvent event){
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swipetimes);
-        if(mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.setEnabled(false);
-        }
+    @Override
+    protected SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
     }
 
     public void addRecycleViewData(List<RouteTimetables> timetables) {

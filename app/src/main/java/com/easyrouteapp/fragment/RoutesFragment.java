@@ -2,7 +2,6 @@ package com.easyrouteapp.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -16,8 +15,6 @@ import com.easyrouteapp.adapter.RouteAdapter;
 import com.easyrouteapp.component.CustomRecycleView;
 import com.easyrouteapp.domain.Route;
 import com.easyrouteapp.event.LoadDataServiceErrorEvent;
-import com.easyrouteapp.event.RefreshStartLoadingEvent;
-import com.easyrouteapp.event.RefreshStopEvent;
 import com.easyrouteapp.event.ReturnLoadDataEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,7 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoutesFragment extends Fragment {
+public class RoutesFragment extends RefreshableFragment {
     private static final String TAG_LOG = "[RoutesFragment]";
 
     private CustomRecycleView routesRV;
@@ -58,6 +55,7 @@ public class RoutesFragment extends Fragment {
 
         routesRV.setAdapter(new RouteAdapter(getActivity(), new ArrayList<Route>()));
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swiperoute);
         return fragmentView;
     }
 
@@ -80,23 +78,6 @@ public class RoutesFragment extends Fragment {
         Toast.makeText(getActivity().getApplicationContext(), event.getMessage(), Toast.LENGTH_LONG).show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStartRefresh(RefreshStartLoadingEvent event) {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swiperoute);
-        if(!mSwipeRefreshLayout.isRefreshing()){
-            mSwipeRefreshLayout.setRefreshing(true);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onStopRefresh(RefreshStopEvent event){
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swiperoute);
-        if(mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.setEnabled(false);
-        }
-    }
-
     public void addRecycleViewData(List<Route> routes) {
         for (int pos = 0; pos < routes.size(); pos++) {
             ((RouteAdapter)routesRV.getAdapter()).addListItem(routes.get(pos), pos);
@@ -107,4 +88,8 @@ public class RoutesFragment extends Fragment {
         ((RouteAdapter)routesRV.getAdapter()).clearData();
     }
 
+    @Override
+    protected SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
+    }
 }
