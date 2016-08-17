@@ -44,7 +44,7 @@ public class RoutesFragment extends Fragment {
 
         fragmentView = inflater.inflate(R.layout.fragment_routes, container, false);
         routesRV = (CustomRecycleView) fragmentView.findViewById(R.id.rv_routes);
-        //routesRV.setHasFixedSize(true);
+        routesRV.setHasFixedSize(true);
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
