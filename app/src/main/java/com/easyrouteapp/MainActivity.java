@@ -20,6 +20,7 @@ import com.easyrouteapp.async.GeocodingTask;
 import com.easyrouteapp.async.RestWebServiceRoutesTask;
 import com.easyrouteapp.domain.EntityBase;
 import com.easyrouteapp.dto.FilterDto;
+import com.easyrouteapp.event.GeoCodeErrorEvent;
 import com.easyrouteapp.event.GeoCodeLoadedEvent;
 import com.easyrouteapp.event.RefreshStartLoadingEvent;
 import com.easyrouteapp.event.RefreshStopEvent;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "[MainActivity]";
+
     private Toolbar searchToolbar;
     private RoutesFragment fragRoutes;
     private List<EntityBase> routes = new ArrayList<>();
@@ -155,5 +158,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, MapActivity.class);
         intent.putExtra(MapActivity.EXTRA_DEFAULT_MAP_NAME, event.getLatLng());
         startActivity(intent);
+    }
+
+    @Subscribe
+    public void onErrorGeoCode(GeoCodeErrorEvent event) {
+        Log.e(TAG, event.getError().getMessage(), event.getError());
+        Toast.makeText(getApplicationContext(), event.getMessage(), Toast.LENGTH_LONG).show();
     }
 }
