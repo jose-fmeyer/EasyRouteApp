@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar searchToolbar;
     private RoutesFragment fragRoutes;
     private List<EntityBase> routes = new ArrayList<>();
+    private MenuItem itemSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem item = menu.findItem(R.id.action_searchable_activity);
-        SearchView searchView = getSearchView(item);
+        this.itemSearch = menu.findItem(R.id.action_searchable_activity);
+        SearchView searchView = getSearchView(itemSearch);
         searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         addFloatButtonActionListener((FloatingActionButton) findViewById(R.id.fab));
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.message_without_con), Toast.LENGTH_LONG).show();
                     return;
                 }
+                itemSearch.collapseActionView();
                 new GeocodingTask(getApplicationContext()).execute(getResources().getString(R.string.name_default_city_map));
             }
         });
