@@ -1,39 +1,27 @@
 package com.easyrouteapp;
 
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.easyrouteapp.adapter.FragmentAdapterDataSize;
 import com.easyrouteapp.adapter.TabsAdapter;
 import com.easyrouteapp.async.RestWebServiceStreetsTask;
 import com.easyrouteapp.async.RestWebServiceTimetablesTask;
-import com.easyrouteapp.component.SlidingTabLayout;
-import com.easyrouteapp.component.listener.OnAttachStateChangeListenerAdapter;
-import com.easyrouteapp.component.listener.OnPageChangeListenerAdapter;
+import com.easyrouteapp.component.listener.OnTabSelectedListenerAdapter;
 import com.easyrouteapp.domain.Route;
 import com.easyrouteapp.domain.RouteStreet;
 import com.easyrouteapp.domain.RouteTimetables;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.DetailLoadDataEvent;
 import com.easyrouteapp.event.LoadDataServiceErrorEvent;
-import com.easyrouteapp.event.RefreshStartLoadingEvent;
-import com.easyrouteapp.event.RefreshStopEvent;
-import com.easyrouteapp.event.ReturnLoadDataEvent;
 import com.easyrouteapp.fragment.RouteStreetsFragment;
 import com.easyrouteapp.fragment.RouteTimetablesFragment;
 
@@ -49,7 +37,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String ROUTE_FOR_DETAIL = "route_for_detail";
 
     private Toolbar detailToolbar;
-    private SlidingTabLayout tabLayout;
+    private TabLayout tabLayout ;
     private ViewPager viewPager;
     private Route routeForDetail;
 
@@ -66,23 +54,17 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(detailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+        tabLayout = (TabLayout) findViewById(R.id.detail_tabs);
+        prepareTabLayout();
         viewPager = (ViewPager) findViewById(R.id.view_page_tabs);
-        viewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), this));
-        tabLayout = (SlidingTabLayout) findViewById(R.id.detail_tabs);
-        tabLayout.setViewPager(viewPager);
-        tabLayout.setSelectedIndicatorColors(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
-        tabLayout.setOnPageChangeListener(new OnPageChangeListenerAdapter() {
-            @Override
-            public void onPageSelected(int position) {
-                loadTabData(position);
-            }
-        });
+        prepareViewPager();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadTabData(TabsAdapter.POS_ROUTE_STREET_TAB);
+        loadTabData(TabsAdapter.INDEX_TAB_STREETS);
     }
 
     @Override
@@ -97,7 +79,7 @@ public class DetailActivity extends AppCompatActivity {
         if(fragDataSize != null && ((FragmentAdapterDataSize)fragDataSize).getAdapterDataSize() > 0){
             return;
         }
-        if(viewPager.getCurrentItem() == TabsAdapter.POS_ROUTE_STREET_TAB) {
+        if(viewPager.getCurrentItem() == TabsAdapter.INDEX_TAB_STREETS) {
             RestWebServiceStreetsTask task = new RestWebServiceStreetsTask(getApplicationContext());
             task.execute(new FilterDto.Builder().withRouteId(routeForDetail.getId().intValue()).build());
             return;
@@ -108,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadRoutesStreetData(DetailLoadDataEvent event) {
-        if(viewPager.getCurrentItem() == TabsAdapter.POS_ROUTE_STREET_TAB) {
+        if(viewPager.getCurrentItem() == TabsAdapter.INDEX_TAB_STREETS) {
             RouteStreetsFragment frag = (RouteStreetsFragment)  getSupportFragmentManager().findFragmentByTag(
                     "android:switcher:"+R.id.view_page_tabs+":0");
             List<RouteStreet> routes = event.getData();
@@ -147,6 +129,24 @@ public class DetailActivity extends AppCompatActivity {
         if(getIntent().getExtras() != null){
             routeForDetail = (Route) getIntent().getExtras().get(DetailActivity.ROUTE_FOR_DETAIL);
         }
+    }
+
+    private void prepareTabLayout() {
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.tab_streets)));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.tab_timetables)));
+        tabLayout.addTab(tabLayout.newTab().setText(getResources().getString(R.string.tab_weekend_timetables)));
+        tabLayout.setOnTabSelectedListener(new OnTabSelectedListenerAdapter(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                loadTabData(tab.getPosition());
+            }
+        });
+    }
+
+    private void prepareViewPager() {
+        viewPager.setAdapter(new TabsAdapter(getSupportFragmentManager(), tabLayout.getTabCount()));
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
     @Override

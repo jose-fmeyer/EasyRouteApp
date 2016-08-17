@@ -15,14 +15,14 @@ import java.util.List;
 /**
  * Created by fernando on 10/08/2016.
  */
-public class RouteTimestableAdapter extends RecyclerView.Adapter<RouteTimestableAdapter.RouteTimetamblesViewHolder> {
+public class RouteTimetablesAdapter extends RecyclerView.Adapter<RouteTimetablesAdapter.RouteTimetamblesViewHolder> {
 
     private List<RouteTimetables> timetables;
     private LayoutInflater layoutInflater;
 
-    public RouteTimestableAdapter(Context c, List<RouteTimetables> timetables){
+    public RouteTimetablesAdapter(Context context, List<RouteTimetables> timetables){
         this.timetables = timetables;
-        this.layoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override

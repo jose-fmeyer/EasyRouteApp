@@ -27,9 +27,9 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
     private List<Route> routes;
     private LayoutInflater layoutInflater;
 
-    public RouteAdapter(Context c, List<Route> routes){
+    public RouteAdapter(Context context, List<Route> routes){
         this.routes = routes;
-        this.layoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override

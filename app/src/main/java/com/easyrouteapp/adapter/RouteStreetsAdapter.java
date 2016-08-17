@@ -24,9 +24,9 @@ public class RouteStreetsAdapter extends RecyclerView.Adapter<RouteStreetsAdapte
     private List<RouteStreet> routes;
     private LayoutInflater layoutInflater;
 
-    public RouteStreetsAdapter(Context c, List<RouteStreet> routes){
+    public RouteStreetsAdapter(Context context, List<RouteStreet> routes){
         this.routes = routes;
-        this.layoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -43,11 +43,6 @@ public class RouteStreetsAdapter extends RecyclerView.Adapter<RouteStreetsAdapte
 
     public void addListItem(RouteStreet route, int position){
         routes.add(position, route);
-        notifyDataSetChanged();
-    }
-
-    public void addListItem(List<RouteStreet> routes){
-        routes.addAll(routes);
         notifyDataSetChanged();
     }
 

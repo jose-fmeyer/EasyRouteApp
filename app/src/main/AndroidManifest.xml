@@ -29,11 +29,9 @@
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:label="@string/title_activity_detail"
-            android:theme="@style/Theme.EasyRouteTheme" />
+            android:label="@string/title_activity_detail"/>
         <activity android:name=".MapActivity"
-            android:label="@string/title_activity_map"
-            android:theme="@style/Theme.EasyRouteTheme" ></activity>
+            android:label="@string/title_activity_map"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

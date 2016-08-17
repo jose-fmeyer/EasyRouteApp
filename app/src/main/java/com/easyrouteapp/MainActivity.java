@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -69,9 +70,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView;
         MenuItem item = menu.findItem(R.id.action_searchable_activity);
-        searchView = getSearchView(item);
+        SearchView searchView = getSearchView(item);
         searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         addFloatButtonActionListener((FloatingActionButton) findViewById(R.id.fab));
@@ -92,15 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private SearchView getSearchView(MenuItem item) {
-        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ){
-            return (SearchView) item.getActionView();
-        }
-        return (SearchView) MenuItemCompat.getActionView( item );
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        return (SearchView) item.getActionView();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -124,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if( Intent.ACTION_SEARCH.equalsIgnoreCase( intent.getAction() ) ){
             String stopName = intent.getStringExtra( SearchManager.QUERY );
+            fragRoutes.getSwipeRefreshLayout().setEnabled(true);
             searchToolbar.setTitle(stopName);
             fragRoutes.clearRecycleViewData();
             RestWebServiceRoutesTask restTask = new RestWebServiceRoutesTask(getApplicationContext());

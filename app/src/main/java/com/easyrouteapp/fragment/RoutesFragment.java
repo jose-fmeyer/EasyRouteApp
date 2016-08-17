@@ -44,7 +44,7 @@ public class RoutesFragment extends RefreshableFragment {
 
         fragmentView = inflater.inflate(R.layout.fragment_routes, container, false);
         routesRV = (CustomRecycleView) fragmentView.findViewById(R.id.rv_routes);
-        routesRV.setHasFixedSize(true);
+        //routesRV.setHasFixedSize(true);
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -70,6 +70,7 @@ public class RoutesFragment extends RefreshableFragment {
         List<Route> routes = event.getData();
         clearRecycleViewData();
         addRecycleViewData(routes);
+        getSwipeRefreshLayout().setEnabled(false);
     }
 
     @Subscribe
@@ -79,8 +80,8 @@ public class RoutesFragment extends RefreshableFragment {
     }
 
     public void addRecycleViewData(List<Route> routes) {
-        for (int pos = 0; pos < routes.size(); pos++) {
-            ((RouteAdapter)routesRV.getAdapter()).addListItem(routes.get(pos), pos);
+        for (int position = 0; position < routes.size(); position++) {
+            ((RouteAdapter)routesRV.getAdapter()).addListItem(routes.get(position), position);
         }
     }
 
@@ -89,7 +90,7 @@ public class RoutesFragment extends RefreshableFragment {
     }
 
     @Override
-    protected SwipeRefreshLayout getSwipeRefreshLayout() {
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
         return mSwipeRefreshLayout;
     }
 }

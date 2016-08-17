@@ -11,7 +11,7 @@ public class ReturnLoadDataEvent <T extends EntityBase>{
 
     private List<T> data;
 
-    public ReturnLoadDataEvent(List<T> data, Class owner){
+    public ReturnLoadDataEvent(List<T> data){
         this.data = data;
     }
 

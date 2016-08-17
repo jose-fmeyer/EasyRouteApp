@@ -33,4 +33,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
     compile 'com.google.android.gms:play-services-maps:6.5.87'
     compile 'net.hockeyapp.android:HockeySDK:4.0.1'
+    compile 'commons-codec:commons-codec:1.4'
+
 }

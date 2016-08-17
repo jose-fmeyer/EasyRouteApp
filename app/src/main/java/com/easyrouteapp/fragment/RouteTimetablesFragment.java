@@ -1,7 +1,6 @@
 package com.easyrouteapp.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,14 +10,10 @@ import android.view.ViewGroup;
 
 import com.easyrouteapp.R;
 import com.easyrouteapp.adapter.FragmentAdapterDataSize;
-import com.easyrouteapp.adapter.RouteTimestableAdapter;
+import com.easyrouteapp.adapter.RouteTimetablesAdapter;
 import com.easyrouteapp.domain.RouteTimetables;
-import com.easyrouteapp.event.RefreshStartLoadingEvent;
-import com.easyrouteapp.event.RefreshStopEvent;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +38,7 @@ public class RouteTimetablesFragment extends RefreshableFragment implements Frag
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewTimetables.setLayoutManager(llm);
 
-        recyclerViewTimetables.setAdapter(new RouteTimestableAdapter(getActivity(), new ArrayList<RouteTimetables>()));
+        recyclerViewTimetables.setAdapter(new RouteTimetablesAdapter(getActivity(), new ArrayList<RouteTimetables>()));
         mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swipetimes);
 
         return fragmentView;
@@ -66,18 +61,15 @@ public class RouteTimetablesFragment extends RefreshableFragment implements Frag
     }
 
     @Override
-    protected SwipeRefreshLayout getSwipeRefreshLayout() {
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
         return mSwipeRefreshLayout;
     }
 
     public void addRecycleViewData(List<RouteTimetables> timetables) {
-        for (int pos = 0; pos < timetables.size(); pos++) {
-            ((RouteTimestableAdapter)recyclerViewTimetables.getAdapter()).addListItem(timetables.get(pos), pos);
+        for (int position = 0; position < timetables.size(); position++) {
+            ((RouteTimetablesAdapter)recyclerViewTimetables.getAdapter()).addListItem(timetables.get(position), position);
         }
-    }
-
-    public void clearRecycleViewData(){
-        ((RouteTimestableAdapter)recyclerViewTimetables.getAdapter()).clearData();
+        getSwipeRefreshLayout().setEnabled(false);
     }
 
     @Override

@@ -14,17 +14,16 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class RefreshableFragment extends Fragment {
 
-    protected abstract SwipeRefreshLayout getSwipeRefreshLayout();
+    public abstract SwipeRefreshLayout getSwipeRefreshLayout();
 
     @Override
     public void onStart() {
         super.onStart();
-        addSwipeTypeRefreshListener();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStartRefresh(RefreshStartLoadingEvent event) {
-        if(isVisible()){
+        if(isVisible()) {
             getSwipeRefreshLayout().setRefreshing(true);
         }
     }
@@ -34,15 +33,6 @@ public abstract class RefreshableFragment extends Fragment {
         if(isVisible()) {
             getSwipeRefreshLayout().setRefreshing(false);
         }
-    }
-
-    private void addSwipeTypeRefreshListener() {
-        getSwipeRefreshLayout().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getSwipeRefreshLayout().setRefreshing(false);
-            }
-        });
     }
 
 }

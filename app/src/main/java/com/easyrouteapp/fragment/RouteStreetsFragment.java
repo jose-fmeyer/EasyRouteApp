@@ -50,6 +50,7 @@ public class RouteStreetsFragment extends RefreshableFragment implements Fragmen
         if(!EventBus.getDefault().isRegistered(RouteStreetsFragment.this)){
             EventBus.getDefault().register(RouteStreetsFragment.this);
         }
+        getSwipeRefreshLayout().setEnabled(true);
     }
 
     @Override
@@ -61,13 +62,10 @@ public class RouteStreetsFragment extends RefreshableFragment implements Fragmen
     }
 
     public void addRecycleViewData(List<RouteStreet> streets) {
-        for (int pos = 0; pos < streets.size(); pos++) {
-            ((RouteStreetsAdapter)recyclerViewStreets.getAdapter()).addListItem(streets.get(pos), pos);
+        for (int position = 0; position < streets.size(); position++) {
+            ((RouteStreetsAdapter)recyclerViewStreets.getAdapter()).addListItem(streets.get(position), position);
         }
-    }
-
-    public void clearRecycleViewData(){
-        ((RouteStreetsAdapter)recyclerViewStreets.getAdapter()).clearData();
+        getSwipeRefreshLayout().setEnabled(false);
     }
 
     @Override
@@ -76,7 +74,7 @@ public class RouteStreetsFragment extends RefreshableFragment implements Fragmen
     }
 
     @Override
-    protected SwipeRefreshLayout getSwipeRefreshLayout() {
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
         return mSwipeRefreshLayout;
     }
 }

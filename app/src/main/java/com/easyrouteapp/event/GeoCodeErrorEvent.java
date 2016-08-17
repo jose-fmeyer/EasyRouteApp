@@ -8,6 +8,10 @@ public class GeoCodeErrorEvent {
     private String message;
     private Throwable error;
 
+    public GeoCodeErrorEvent(String message) {
+        this.message = message;
+    }
+
     public GeoCodeErrorEvent(String message, Throwable error) {
         this.message = message;
         this.error = error;

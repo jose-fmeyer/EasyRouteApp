@@ -31,6 +31,10 @@ public class GeocodingTask extends AsyncTask<String, Void, LatLng> {
     @Override
     protected LatLng doInBackground(String... params) {
         try {
+            if(!GeocoderHelper.isGeocoderAvailable()){
+                EventBus.getDefault().post(new GeoCodeErrorEvent("Geo Code Service is not enable."));
+                return null;
+            }
             double[] coordinates = GeocoderHelper.doGeocoding(context, params[0]);
             return new LatLng(coordinates[0], coordinates[1]);
         } catch (final IOException e) {

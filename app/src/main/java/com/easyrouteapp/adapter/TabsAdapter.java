@@ -1,50 +1,37 @@
 package com.easyrouteapp.adapter;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.easyrouteapp.R;
 import com.easyrouteapp.fragment.RouteStreetsFragment;
 import com.easyrouteapp.fragment.RouteTimetablesFragment;
-import com.easyrouteapp.helper.ResourceHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by fernando on 11/08/2016.
  */
 public class TabsAdapter extends FragmentPagerAdapter {
-    public static final int POS_ROUTE_STREET_TAB = 0;
-    public static final int POS_ROUTE_TIMETABLES_TAB = 1;
+    public static final int INDEX_TAB_STREETS = 0;
+    public static final int INDEX_TAB_TIMETABLES_WEEKDAY = 1;
+    public static final int INDEX_TAB_TIMETABLES_WEEKEND = 2;
 
-    private Context context;
-    private List<String> titles = new ArrayList<>();
+    private int numberOfTabs;
 
-    public TabsAdapter(FragmentManager fm, Context context) {
+    public TabsAdapter(FragmentManager fm, int numberOfTabs) {
         super(fm);
-        this.context = context;
-        loadTitles();
-    }
-
-    private void loadTitles(){
-        titles.add(ResourceHelper.getString(context, R.string.tab_streets));
-        titles.add(ResourceHelper.getString(context, R.string.tab_timetables));
-        titles.add(ResourceHelper.getString(context, R.string.tab_weekend_timetables));
+        this.numberOfTabs = numberOfTabs;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
         switch (position){
-            case 0 : fragment = new RouteStreetsFragment();
+            case INDEX_TAB_STREETS: fragment = new RouteStreetsFragment();
             break;
-            case 1 : fragment = new RouteTimetablesFragment();
+            case INDEX_TAB_TIMETABLES_WEEKDAY: fragment = new RouteTimetablesFragment();
             break;
-            case 2 : fragment = new RouteTimetablesFragment();
+            case INDEX_TAB_TIMETABLES_WEEKEND: fragment = new RouteTimetablesFragment();
             break;
         }
         Bundle bundle = new Bundle();
@@ -55,11 +42,6 @@ public class TabsAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return titles.size();
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return titles.get(position);
+        return numberOfTabs;
     }
 }
