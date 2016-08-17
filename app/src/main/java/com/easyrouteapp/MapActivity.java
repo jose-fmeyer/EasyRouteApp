@@ -6,6 +6,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.easyrouteapp.async.ReverseGeocodingTask;
@@ -27,17 +29,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static final String EXTRA_DEFAULT_MAP_NAME = "EXTRA_DEFAULT_MAP_NAME";
     private LatLng defaultCoordinates;
     private GoogleMap googleMap;
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         EventBus.getDefault().register(MapActivity.this);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_swipemap);
-        mSwipeRefreshLayout.setEnabled(false);
-        addSwipeTypeRefreshListener();
+        progressBar = (ProgressBar) findViewById(R.id.progress_map);
         setDefaultCoordinates();
+
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
@@ -72,12 +73,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStartRefresh(RefreshStartLoadingEvent event) {
-        mSwipeRefreshLayout.setRefreshing(true);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStopRefresh(RefreshStopEvent event) {
-        mSwipeRefreshLayout.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
         finish();
     }
 
@@ -88,7 +89,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         alertDialogBuilder.setPositiveButton(getResources().getString(R.string.label_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mSwipeRefreshLayout.setEnabled(true);
                 dialog.cancel();
                 new ReverseGeocodingTask(getApplicationContext()).execute(latLng.latitude, latLng.longitude);
             }
@@ -101,14 +101,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
         alertDialogBuilder.create().show();
     }
-
-    private void addSwipeTypeRefreshListener() {
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
 }

@@ -2,6 +2,7 @@ package com.easyrouteapp.fragment;
 
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -24,11 +25,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoutesFragment extends RefreshableFragment {
+public class RoutesFragment extends Fragment {
     private static final String TAG_LOG = "[RoutesFragment]";
 
     private CustomRecycleView routesRV;
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
     private View fragmentView;
 
     public RoutesFragment() {
@@ -55,7 +55,6 @@ public class RoutesFragment extends RefreshableFragment {
 
         routesRV.setAdapter(new RouteAdapter(getActivity(), new ArrayList<Route>()));
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.srl_swiperoute);
         return fragmentView;
     }
 
@@ -70,7 +69,6 @@ public class RoutesFragment extends RefreshableFragment {
         List<Route> routes = event.getData();
         clearRecycleViewData();
         addRecycleViewData(routes);
-        getSwipeRefreshLayout().setEnabled(false);
     }
 
     @Subscribe
@@ -87,10 +85,5 @@ public class RoutesFragment extends RefreshableFragment {
 
     public void clearRecycleViewData(){
         ((RouteAdapter)routesRV.getAdapter()).clearData();
-    }
-
-    @Override
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return mSwipeRefreshLayout;
     }
 }

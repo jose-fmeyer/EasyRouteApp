@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.easyrouteapp.adapter.FragmentAdapterDataSize;
@@ -22,6 +24,8 @@ import com.easyrouteapp.domain.RouteTimetables;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.DetailLoadDataEvent;
 import com.easyrouteapp.event.LoadDataServiceErrorEvent;
+import com.easyrouteapp.event.RefreshStartLoadingEvent;
+import com.easyrouteapp.event.RefreshStopEvent;
 import com.easyrouteapp.fragment.RouteStreetsFragment;
 import com.easyrouteapp.fragment.RouteTimetablesFragment;
 
@@ -40,6 +44,7 @@ public class DetailActivity extends AppCompatActivity {
     private TabLayout tabLayout ;
     private ViewPager viewPager;
     private Route routeForDetail;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class DetailActivity extends AppCompatActivity {
         detailToolbar.setTitle(routeForDetail.getLongName());
         setSupportActionBar(detailToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        progressBar = (ProgressBar) findViewById(R.id.progress_detail);
 
         tabLayout = (TabLayout) findViewById(R.id.detail_tabs);
         prepareTabLayout();
@@ -71,6 +76,16 @@ public class DetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(DetailActivity.this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartRefresh(RefreshStartLoadingEvent event) {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStopRefresh(RefreshStopEvent event) {
+        progressBar.setVisibility(View.GONE);
     }
 
     private void loadTabData(int position) {

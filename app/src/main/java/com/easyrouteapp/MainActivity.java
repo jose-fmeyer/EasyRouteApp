@@ -3,11 +3,8 @@ package com.easyrouteapp;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -16,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.easyrouteapp.async.GeocodingTask;
@@ -23,6 +21,8 @@ import com.easyrouteapp.async.RestWebServiceRoutesTask;
 import com.easyrouteapp.domain.EntityBase;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.GeoCodeLoadedEvent;
+import com.easyrouteapp.event.RefreshStartLoadingEvent;
+import com.easyrouteapp.event.RefreshStopEvent;
 import com.easyrouteapp.event.ReverseGeoCodeLoadedEvent;
 import com.easyrouteapp.event.StartDetailRouteEvent;
 import com.easyrouteapp.fragment.RoutesFragment;
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private RoutesFragment fragRoutes;
     private List<EntityBase> routes = new ArrayList<>();
     private MenuItem itemSearch;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         searchToolbar = (Toolbar) findViewById(R.id.tb_search);
         searchToolbar.setLogo(R.mipmap.ic_launcher);
         setSupportActionBar(searchToolbar);
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_main);
 
         fragRoutes = (RoutesFragment) getSupportFragmentManager().findFragmentById(R.id.routes_fragment_container);
         if (fragRoutes == null) {
@@ -65,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy(){
         super.onDestroy();
         EventBus.getDefault().unregister(MainActivity.this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartRefresh(RefreshStartLoadingEvent event) {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStopRefresh(RefreshStopEvent event) {
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -118,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         }
         if( Intent.ACTION_SEARCH.equalsIgnoreCase( intent.getAction() ) ){
             String stopName = intent.getStringExtra( SearchManager.QUERY );
-            fragRoutes.getSwipeRefreshLayout().setEnabled(true);
             searchToolbar.setTitle(stopName);
             fragRoutes.clearRecycleViewData();
             RestWebServiceRoutesTask restTask = new RestWebServiceRoutesTask(getApplicationContext());
