@@ -10,10 +10,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.easyrouteapp.helper.ResourceAssetPropertyHelper.PropertiesKeys;
 import com.easyrouteapp.async.ReverseGeocodingTask;
 import com.easyrouteapp.event.GeoCodeErrorEvent;
 import com.easyrouteapp.event.RefreshStartLoadingEvent;
 import com.easyrouteapp.event.RefreshStopEvent;
+import com.easyrouteapp.helper.ResourceAssetPropertyHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -62,7 +64,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         googleMap.setOnMapLongClickListener(this);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultCoordinates, 12));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getDefaultCoordinates(), 12));
+    }
+
+    public LatLng getDefaultCoordinates() {
+        if(defaultCoordinates != null) {
+            return defaultCoordinates;
+        }
+        ResourceAssetPropertyHelper assetHelper = new ResourceAssetPropertyHelper(getApplicationContext());
+        Double latitude = Double.valueOf(assetHelper.getString(PropertiesKeys.LAT_DEFAULT_FLORIANOPOLIS));
+        Double longitude = Double.valueOf(assetHelper.getString(PropertiesKeys.LONG_DEFAULT_FLORIANOPOLIS));
+        return null;
     }
 
     @Subscribe

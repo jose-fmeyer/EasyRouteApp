@@ -32,6 +32,8 @@ public class ResourceAssetPropertyHelper {
         public static final String CONNECTION_USER = "connection.user";
         public static final String CONNECTION_PASSWORD = "connection.password";
         public static final String CONNECTION_BASE_ENDPOINT= "connection.base.endpoint";
+        public static final String LAT_DEFAULT_FLORIANOPOLIS= "map.lat.default.floripa";
+        public static final String LONG_DEFAULT_FLORIANOPOLIS= "map.long.default.floripa";
     }
 
     public String getString(String property) {
