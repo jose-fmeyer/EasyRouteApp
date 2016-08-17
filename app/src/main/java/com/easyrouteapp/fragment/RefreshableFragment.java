@@ -16,11 +16,6 @@ public abstract class RefreshableFragment extends Fragment {
 
     public abstract SwipeRefreshLayout getSwipeRefreshLayout();
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStartRefresh(RefreshStartLoadingEvent event) {
         if(isVisible()) {
