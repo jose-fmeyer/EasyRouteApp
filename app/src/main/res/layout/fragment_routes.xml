@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.easyrouteapp.fragment.RoutesFragment">
+
+    <com.easyrouteapp.component.CustomRecycleView
+        android:id="@+id/rv_routes"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/list_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/empty_data"
+            android:textColor="@color/colorPrimarytext"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

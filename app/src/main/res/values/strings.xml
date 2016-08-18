@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Easy Route App</string>
+    <string name="title_activity_detail">Route Details</string>
+    <string name="search_hint">Street Name</string>
+    <string name="action_search_route">Search Routes</string>
+    <string name="empty_data">No routes to show</string>
+    <string name="tab_streets">ROUTE STREETS</string>
+    <string name="tab_timetables">WEEKDAY TIMETABLES</string>
+    <string name="tab_weekend_timetables">WEEKEND TIMETABLES</string>
+    <string name="title_activity_float">FloatActivity</string>
+    <string name="title_activity_map">Map</string>
+    <string name="msg_use_coordinates">Do you wanna use this coordinates to find routes?</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="message_without_con">Is not possible to start the search because you don\'t have internet access.</string>
+    <string name="name_default_city_map">Florianópolis, SC</string>
+    <string name="label_weekday">WEEKDAY</string>
+    <string name="location_not_founded">Was not possible to find the address by the clicked point. Please, select other point on the map and try again.</string>
+</resources>
