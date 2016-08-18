@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.easyrouteapp.async.GeocodingTask;
 import com.easyrouteapp.async.RestWebServiceRoutesTask;
-import com.easyrouteapp.domain.EntityBase;
 import com.easyrouteapp.dto.FilterDto;
 import com.easyrouteapp.event.GeoCodeErrorEvent;
 import com.easyrouteapp.event.GeoCodeLoadedEvent;
@@ -33,15 +32,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "[MainActivity]";
 
     private Toolbar searchToolbar;
     private RoutesFragment fragRoutes;
-    private List<EntityBase> routes = new ArrayList<>();
     private MenuItem itemSearch;
     private ProgressBar progressBar;
 

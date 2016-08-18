@@ -1,6 +1,5 @@
 package com.easyrouteapp.helper;
 
-import android.content.Context;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
@@ -27,21 +26,16 @@ public class ResponseServiceConnectionValidatorHelper {
         }
     }
 
-    private Context context;
+    private ResponseServiceConnectionValidatorHelper(){};
 
-    public ResponseServiceConnectionValidatorHelper(Context context) {
-        this.context = context;
-    }
-
-    public void validateResponseService(Response response) throws ConnectionServiceException {
+    public static void validateResponseService(Response response) throws ConnectionServiceException {
         if(ResponseStatusCodes.SUCESS.getStatusCode() == response.code()
                 || ResponseStatusCodes.CREATED.getStatusCode() == response.code()) {
             return;
         }
         Pair<String, Class> responseExceptionProperties =  exceptions.get(response.code());
-        ResourceAssetPropertyHelper helperAsset = new ResourceAssetPropertyHelper(context);
         try {
-            throw (ConnectionServiceException) responseExceptionProperties.second.getConstructor(String.class).newInstance(helperAsset.getString(responseExceptionProperties.first));
+            throw (ConnectionServiceException) responseExceptionProperties.second.getConstructor(String.class).newInstance(ResourceAssetPropertyHelper.getString(responseExceptionProperties.first));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             Log.e(TAG, "Error on execute service connection.", e);
             throw new ConnectionServiceException("Error on execute service connection.", e);

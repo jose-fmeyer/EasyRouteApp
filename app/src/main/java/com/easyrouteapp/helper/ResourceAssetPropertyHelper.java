@@ -15,9 +15,17 @@ import java.util.Properties;
 public class ResourceAssetPropertyHelper {
     private static final String TAG = "[ResourceAssetHelper]";
 
-    private Properties properties;
+    private static ResourceAssetPropertyHelper assetPropertyHelper;
+    private static Properties properties;
 
-    public ResourceAssetPropertyHelper(Context context) throws AssetReaderException {
+    public static ResourceAssetPropertyHelper initInstance(Context context) {
+        if(assetPropertyHelper == null) {
+            assetPropertyHelper = new ResourceAssetPropertyHelper(context);
+        }
+        return assetPropertyHelper;
+    }
+
+    private ResourceAssetPropertyHelper(Context context) throws AssetReaderException {
         AssetManager assetManager = context.getResources().getAssets();
         this.properties = new Properties();
         try {
@@ -36,7 +44,7 @@ public class ResourceAssetPropertyHelper {
         public static final String LONG_DEFAULT_FLORIANOPOLIS= "map.long.default.floripa";
     }
 
-    public String getString(String property) {
-        return this.properties.get(property).toString();
+    public static String getString(String property) {
+        return properties.get(property).toString();
     }
 }

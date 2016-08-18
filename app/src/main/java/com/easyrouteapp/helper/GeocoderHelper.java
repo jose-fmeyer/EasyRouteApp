@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class GeocoderHelper {
 	
-	public static boolean isGeocoderAvailable() {
+	public static boolean isGeoCoderAvailable() {
         return Geocoder.isPresent();
 	}
 

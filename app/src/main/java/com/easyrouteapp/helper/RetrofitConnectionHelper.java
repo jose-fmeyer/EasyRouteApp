@@ -12,26 +12,20 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public class RetrofitConnectionHelper {
 
-    private ResourceAssetPropertyHelper assetHelper;
-    private Context context;
+    private RetrofitConnectionHelper(){};
 
-    public RetrofitConnectionHelper(Context context) {
-        this.assetHelper = new ResourceAssetPropertyHelper(context);
-        this.context = context;
-    }
-
-    public Retrofit getRetrofitConnection() {
-        String baseEndpoint = assetHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_BASE_ENDPOINT);
+    public static Retrofit getRetrofitConnection() {
+        String baseEndpoint = ResourceAssetPropertyHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_BASE_ENDPOINT);
         return getRetrofitService(baseEndpoint);
     }
 
-    public String getBasicAuthorization(){
-        String user = assetHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_USER);
-        String password = assetHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_PASSWORD);
+    public static String getBasicAuthorization(){
+        String user = ResourceAssetPropertyHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_USER);
+        String password = ResourceAssetPropertyHelper.getString(ResourceAssetPropertyHelper.PropertiesKeys.CONNECTION_PASSWORD);
         return BasicAuthorizationHelper.getBasicAuthorizationString(user, password);
     }
 
-    private Retrofit getRetrofitService(String baseEndPoint) throws AssetReaderException {
+    private static Retrofit getRetrofitService(String baseEndPoint) throws AssetReaderException {
         return new Retrofit.Builder()
                 .baseUrl(baseEndPoint)
                 .addConverterFactory(JacksonConverterFactory.create())

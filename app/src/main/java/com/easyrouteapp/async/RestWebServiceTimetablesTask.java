@@ -38,17 +38,15 @@ public class RestWebServiceTimetablesTask extends AsyncTask<FilterDto, Void, Voi
 
     @Override
     protected Void doInBackground(FilterDto... params) {
-        RetrofitConnectionHelper retHelper = new RetrofitConnectionHelper(context);
-        Retrofit retrofit = retHelper.getRetrofitConnection();
+        Retrofit retrofit = RetrofitConnectionHelper.getRetrofitConnection();
         RoutesTimetablesService routesService = retrofit.create(RoutesTimetablesService.class);
-        Call<ReturnDataTimetablesDto> listCall = routesService.listRoutesTimetables(retHelper.getBasicAuthorization(), params[0]);
+        Call<ReturnDataTimetablesDto> listCall = routesService.listRoutesTimetables(RetrofitConnectionHelper.getBasicAuthorization(), params[0]);
         listCall.enqueue(new Callback<ReturnDataTimetablesDto>() {
             @Override
             public void onResponse(Call<ReturnDataTimetablesDto> call, Response<ReturnDataTimetablesDto> response) {
                 try {
-                    ResponseServiceConnectionValidatorHelper validatorHelper = new ResponseServiceConnectionValidatorHelper(context);
                     EventBus.getDefault().post(new RefreshStopEvent());
-                    validatorHelper.validateResponseService(response);
+                    ResponseServiceConnectionValidatorHelper.validateResponseService(response);
                     EventBus.getDefault().post(new DetailLoadDataEvent<>(response.body().getRows()));
                 } catch (ConnectionServiceException e) {
                     EventBus.getDefault().post(new LoadDataServiceErrorEvent(e.getMessage(), e));

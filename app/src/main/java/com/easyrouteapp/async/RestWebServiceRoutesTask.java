@@ -38,17 +38,15 @@ public class RestWebServiceRoutesTask extends AsyncTask<FilterDto, Void, Void> {
 
     @Override
     protected Void doInBackground(FilterDto... params) {
-        RetrofitConnectionHelper retHelper = new RetrofitConnectionHelper(context);
-        Retrofit retrofit = retHelper.getRetrofitConnection();
+        Retrofit retrofit = RetrofitConnectionHelper.getRetrofitConnection();
         RoutesService routesService = retrofit.create(RoutesService.class);
-        Call<ReturnDataRouteDto> listCall = routesService.listRoutes(retHelper.getBasicAuthorization(), params[0]);
+        Call<ReturnDataRouteDto> listCall = routesService.listRoutes(RetrofitConnectionHelper.getBasicAuthorization(), params[0]);
         listCall.enqueue(new Callback<ReturnDataRouteDto>() {
             @Override
             public void onResponse(Call<ReturnDataRouteDto> call, Response<ReturnDataRouteDto> response) {
                 try {
-                    ResponseServiceConnectionValidatorHelper validatorHelper = new ResponseServiceConnectionValidatorHelper(context);
                     EventBus.getDefault().post(new RefreshStopEvent());
-                    validatorHelper.validateResponseService(response);
+                    ResponseServiceConnectionValidatorHelper.validateResponseService(response);
                     EventBus.getDefault().post(new ReturnLoadDataEvent<>(response.body().getRows()));
                 } catch (ConnectionServiceException e) {
                     EventBus.getDefault().post(new LoadDataServiceErrorEvent(e.getMessage(), e));

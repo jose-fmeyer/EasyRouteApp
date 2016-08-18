@@ -1,7 +1,6 @@
 package com.easyrouteapp;
 
 import android.content.DialogInterface;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String TAG_LOG = "[MapActivity]";
     public static final String EXTRA_DEFAULT_MAP_NAME = "EXTRA_DEFAULT_MAP_NAME";
     private LatLng defaultCoordinates;
-    private GoogleMap googleMap;
     private ProgressBar progressBar;
 
     @Override
@@ -59,7 +57,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
@@ -71,10 +68,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(defaultCoordinates != null) {
             return defaultCoordinates;
         }
-        ResourceAssetPropertyHelper assetHelper = new ResourceAssetPropertyHelper(getApplicationContext());
-        Double latitude = Double.valueOf(assetHelper.getString(PropertiesKeys.LAT_DEFAULT_FLORIANOPOLIS));
-        Double longitude = Double.valueOf(assetHelper.getString(PropertiesKeys.LONG_DEFAULT_FLORIANOPOLIS));
-        return null;
+        Double latitude = Double.valueOf(ResourceAssetPropertyHelper.getString(PropertiesKeys.LAT_DEFAULT_FLORIANOPOLIS));
+        Double longitude = Double.valueOf(ResourceAssetPropertyHelper.getString(PropertiesKeys.LONG_DEFAULT_FLORIANOPOLIS));
+        return new LatLng(latitude, longitude);
     }
 
     @Subscribe

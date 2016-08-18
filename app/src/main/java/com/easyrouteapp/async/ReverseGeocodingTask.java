@@ -29,7 +29,7 @@ public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
     @Override
     protected String doInBackground(Double... params) {
         try {
-            if(!GeocoderHelper.isGeocoderAvailable()){
+            if(!GeocoderHelper.isGeoCoderAvailable()){
                 EventBus.getDefault().post(new GeoCodeErrorEvent("Geo Code Service is not enable."));
                 return null;
             }
